@@ -1,1 +1,1 @@
-# mcp-email
+# mail-mcp-service
