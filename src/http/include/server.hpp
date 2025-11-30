@@ -1,6 +1,7 @@
 #pragma once
 
-#include <controller/health_controller.hpp>
+#include <error_controller.hpp>
+#include <health_controller.hpp>
 
 #include <boost/asio.hpp>
 
@@ -15,13 +16,14 @@ namespace mail_mcp::http
     public:
         Server(asio::io_context &ioc, const tcp::endpoint &endpoint);
 
-        void run(); // starts async accept
+        void run(); // starts server
 
     private:
         void doAccept();
 
         asio::io_context &ioc_;
         tcp::acceptor acceptor_;
+        ErrorController errorController_;
         HealthController healthController_;
     };
 

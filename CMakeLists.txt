@@ -5,12 +5,18 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(src/http)
+add_subdirectory(src/entity)
 
 add_executable(mail_mcp_service
     src/main.cpp
 )
 
+target_include_directories(mail_mcp_http PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
 target_link_libraries(mail_mcp_service PRIVATE
+    mail_mcp_entity
     mail_mcp_http
 )
 

@@ -48,7 +48,7 @@ namespace mail_mcp::http
             {
                 if (!ec)
                 {
-                    std::make_shared<Session>(std::move(socket), healthController_)->start();
+                    std::make_shared<Session>(std::move(socket), healthController_, errorController_)->start();
                 }
                 else
                 {
