@@ -15,15 +15,9 @@ namespace mail_mcp::http
     HttpResponseData HealthController::health() const
     {
         entity::HealthStatus status{"ok"};
-
-        HttpResponseData res;
         nlohmann::json payload;
-        res.status = beast::http::status::ok;
-        res.contentType = CONTENT_TYPE_JSON;
-
         status.serialize(payload);
-        res.body = payload.dump();
 
-        return res;
+        return HttpResponseData (payload.dump());
     }
 }

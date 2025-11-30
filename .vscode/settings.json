@@ -75,6 +75,9 @@
         "variant": "cpp",
         "queue": "cpp",
         "text_encoding": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "forward_list": "cpp",
+        "valarray": "cpp",
+        "fstream": "cpp"
     }
 }

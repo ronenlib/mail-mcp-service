@@ -1,13 +1,15 @@
 #include <server.hpp>
+
 #include <session.hpp>
+#include <auth_controller.hpp>
 
 #include <boost/beast/core.hpp>
 #include <iostream>
 
 namespace mail_mcp::http
 {
-    Server::Server(asio::io_context &ioc, const tcp::endpoint &endpoint)
-        : ioc_(ioc), acceptor_(ioc)
+    Server::Server(asio::io_context &ioc, const tcp::endpoint &endpoint, const GoogleOAuthConfig oauthConfig)
+        : ioc_(ioc), acceptor_(ioc), authController_(std::move(oauthConfig))
     {
         boost::system::error_code ec;
 
@@ -48,7 +50,7 @@ namespace mail_mcp::http
             {
                 if (!ec)
                 {
-                    std::make_shared<Session>(std::move(socket), healthController_, errorController_)->start();
+                    std::make_shared<Session>(std::move(socket), healthController_, errorController_, authController_)->start();
                 }
                 else
                 {

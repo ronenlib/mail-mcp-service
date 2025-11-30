@@ -8,8 +8,8 @@
 
 namespace mail_mcp::http
 {
-    Session::Session(tcp::socket socket, HealthController &healthController, ErrorController &errorController)
-        : socket_(std::move(socket)), healthController_(healthController), errorController_(errorController)
+    Session::Session(tcp::socket socket, HealthController &healthController, ErrorController &errorController, AuthController &authController)
+        : socket_(std::move(socket)), healthController_(healthController), errorController_(errorController), authController_(authController)
     {
     }
 
@@ -32,16 +32,22 @@ namespace mail_mcp::http
             });
     }
 
-    HttpResponseData Session::dispatch()
+    void Session::onRequest()
     {
         if (request_.method() == http::verb::get && request_.target() == "/health")
         {
-            return healthController_.health();
+            healthController_.health().applyResponse(response_);
+        }
+        else if (request_.method() == http::verb::get && request_.target() == "/auth/google/start") {
+            authController_.oauthStart(request_).applyResponse(response_);
+        }   
+        else if (request_.method() == http::verb::get && request_.target() == "/auth/google/callback") {
+            authController_.oauthStart(request_).applyResponse(response_);
         }
         else
         {
             entity::Error error(entity::ErrorCode::NotFound, "path not found");
-            return errorController_.error(error);
+            errorController_.error(error).applyResponse(response_);
         }
     }
 
@@ -56,15 +62,7 @@ namespace mail_mcp::http
             return;
         }
 
-        HttpResponseData data = dispatch();
-
-        response_.version(request_.version());
-        response_.set(http::field::server, "mail-mcp-server");
-        response_.set(http::field::content_type, data.contentType);
-        response_.keep_alive(data.keepAlive);
-        response_.result(data.status);
-        response_.body() = std::move(data.body);
-        response_.prepare_payload();
+        onRequest();
 
         auto self = shared_from_this();
         http::async_write(

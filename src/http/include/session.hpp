@@ -1,5 +1,6 @@
 #pragma once
 
+#include <auth_controller.hpp>
 #include <error_controller.hpp>
 #include <health_controller.hpp>
 #include <http_response_data.hpp>
@@ -20,14 +21,14 @@ namespace mail_mcp::http
     class Session : public std::enable_shared_from_this<Session>
     {
     public:
-        explicit Session(tcp::socket socket, HealthController &healthController, ErrorController &errorController);
+        explicit Session(tcp::socket socket, HealthController &healthController, ErrorController &errorController, AuthController &authController);
 
         // Entry point: start handling this connection
         void start();
 
     private:
         void doRead();
-        HttpResponseData dispatch();
+        void onRequest();
         void onRead(beast::error_code ec, std::size_t bytesTransferred);
         void onWrite(beast::error_code ec, std::size_t bytesTransferred);
 
@@ -36,6 +37,7 @@ namespace mail_mcp::http
         http::request<http::string_body> request_;
         http::response<http::string_body> response_;
 
+        AuthController &authController_;
         HealthController &healthController_;
         ErrorController &errorController_;
     };

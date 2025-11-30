@@ -7,7 +7,7 @@ namespace mail_mcp::entity
 {
 
     Error::Error(ErrorCode code, const std::string &status)
-        : code_(code), message_(status)
+        : code_(code), message_(std::move(status))
     {
     }
 

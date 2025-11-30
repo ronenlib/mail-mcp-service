@@ -13,15 +13,10 @@ namespace mail_mcp::http
 {
     HttpResponseData ErrorController::error(const entity::Error &error) const
     {
-        HttpResponseData res;
         nlohmann::json payload;
-        res.status = errorCodeToStatus(error.code());
-        res.contentType = CONTENT_TYPE_JSON;
-
         error.serialize(payload);
-        res.body = payload.dump();
 
-        return res;
+        return HttpResponseData (payload.dump(), errorCodeToStatus(error.code()));
     }
 
     beast::http::status ErrorController::errorCodeToStatus(entity::ErrorCode code) const

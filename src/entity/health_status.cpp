@@ -7,7 +7,7 @@ namespace mail_mcp::entity
 {
 
     HealthStatus::HealthStatus(const std::string &status)
-        : status_(status)
+        : status_(std::move(status))
     {
     }
 
