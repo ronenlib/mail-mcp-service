@@ -1,6 +1,7 @@
 #pragma once
 
 #include "json_serializable.hpp"
+
 #include <boost/beast/http.hpp>
 #include <string>
 

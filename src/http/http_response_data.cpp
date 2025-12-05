@@ -10,15 +10,14 @@ namespace mail_mcp::http {
 
     HttpResponseData::HttpResponseData(const entity::JsonSerializable& entity,
                                        beast::http::status status, bool keepAlive)
-        : body_(jsonSerialize(entity)), contentType_(CONTENT_TYPE_JSON), status_(status), keepAlive_(keepAlive) {
-    }
+        : body_(jsonSerialize(entity)), contentType_(CONTENT_TYPE_JSON), status_(status),
+          keepAlive_(keepAlive) {}
 
     auto HttpResponseData::jsonSerialize(const entity::JsonSerializable& entity) -> std::string {
         nlohmann::json payload;
         entity.serialize(payload);
         return payload.dump();
     }
-
 
     void HttpResponseData::applyResponse(Response& response) const {
         response.version(SERVICE_VERSION);

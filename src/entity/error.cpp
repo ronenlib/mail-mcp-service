@@ -1,12 +1,12 @@
 #include "error.hpp"
+
 #include <nlohmann/json.hpp>
 #include <string>
 #include <utility>
 
 namespace mail_mcp::entity {
 
-    Error::Error(ErrorCode code, const std::string& message)
-        : code_(code), message_(message) {}
+    Error::Error(ErrorCode code, const std::string& message) : code_(code), message_(message) {}
 
     Error::Error(ErrorCode code, std::string&& message)
         : code_(code), message_(std::move(message)) {}

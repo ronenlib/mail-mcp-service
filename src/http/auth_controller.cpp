@@ -49,7 +49,8 @@ namespace mail_mcp::http {
     //     return HttpResponseData("{}");
     // }
 
-    [[nodiscard]] auto AuthController::extractCode(boost::beast::string_view target) -> boost::beast::string_view {
+    [[nodiscard]] auto AuthController::extractCode(boost::beast::string_view target)
+        -> boost::beast::string_view {
         urls::url_view parsed = urls::parse_relative_ref(target).value();
 
         auto params = parsed.params();
