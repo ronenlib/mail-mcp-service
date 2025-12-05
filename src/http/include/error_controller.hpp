@@ -1,24 +1,20 @@
 #pragma once
 
-#include <http_response_data.hpp>
-
-#include <error.hpp>
+#include "http_response_data.hpp"
 
 #include <boost/beast/http.hpp>
-#include <string>
+#include <error.hpp>
 
-namespace beast = boost::beast;
+namespace mail_mcp::http {
+    namespace beast = boost::beast;
 
-namespace mail_mcp::http
-{
-    class ErrorController
-    {
-    public:
+    class ErrorController {
+      public:
         ErrorController() = default;
 
-        HttpResponseData error(const entity::Error &error) const;
+        [[nodiscard]] auto error(const entity::Error& error) -> HttpResponseData;
 
-    private:
-        beast::http::status errorCodeToStatus(entity::ErrorCode code) const;
+      private:
+        [[nodiscard]] static auto errorCodeToStatus(entity::ErrorCode code) -> beast::http::status;
     };
-}
+} // namespace mail_mcp::http

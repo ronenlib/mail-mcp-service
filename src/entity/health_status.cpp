@@ -1,20 +1,15 @@
-#include <health_status.hpp>
+#include "health_status.hpp"
 
 #include <nlohmann/json.hpp>
 #include <string>
 
-namespace mail_mcp::entity
-{
+namespace mail_mcp::entity {
 
-    HealthStatus::HealthStatus(const std::string &status)
-        : status_(std::move(status))
-    {
-    }
+    HealthStatus::HealthStatus(const std::string& status) : status_(status) {}
+    HealthStatus::HealthStatus(std::string&& status) : status_(std::move(status)) {}
 
-    void HealthStatus::serialize(nlohmann::json &out) const
-    {
-        out = nlohmann::json{
-            {"status", status_}};
+    void HealthStatus::serialize(nlohmann::json& out) const {
+        out = nlohmann::json{{"status", status_}};
     }
 
 } // namespace mail_mcp::entity

@@ -1,34 +1,26 @@
-#include <error_controller.hpp>
-#include <http_response_data.hpp>
+#include "error_controller.hpp"
 
-#include <error.hpp>
+#include "error.hpp"
+#include "http_response_data.hpp"
 
-#include <nlohmann/json.hpp>
 #include <boost/beast/http.hpp>
-#include <string>
+#include <nlohmann/json.hpp>
 
-namespace beast = boost::beast;
-
-namespace mail_mcp::http
-{
-    HttpResponseData ErrorController::error(const entity::Error &error) const
-    {
+namespace mail_mcp::http {
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
+    auto ErrorController::error(const entity::Error& error) -> HttpResponseData {
         nlohmann::json payload;
         error.serialize(payload);
 
-        return HttpResponseData (payload.dump(), errorCodeToStatus(error.code()));
+        return HttpResponseData(payload.dump(), errorCodeToStatus(error.code()));
     }
 
-    beast::http::status ErrorController::errorCodeToStatus(entity::ErrorCode code) const
-    {
-        switch (code)
-        {
+    auto ErrorController::errorCodeToStatus(entity::ErrorCode code) -> beast::http::status {
+        switch (code) {
         case entity::ErrorCode::NotFound:
             return beast::http::status::not_found;
-        case entity::ErrorCode::InternalError:
-            return beast::http::status::internal_server_error;
         default:
             return beast::http::status::internal_server_error;
         }
     }
-}
+} // namespace mail_mcp::http

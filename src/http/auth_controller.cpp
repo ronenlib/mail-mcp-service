@@ -1,25 +1,19 @@
 #include <auth_controller.hpp>
-
-#include <http_response_data.hpp>
-#include <oauth_start.hpp>
-
-#include <nlohmann/json.hpp>
 #include <boost/beast/http.hpp>
-#include <boost/url/url.hpp>
 #include <boost/url/parse.hpp>
-
-#include <memory>
+#include <boost/url/url.hpp>
+#include <http_response_data.hpp>
+#include <nlohmann/json.hpp>
+#include <oauth_start.hpp>
 #include <string>
 
 namespace urls = boost::urls;
 
-namespace mail_mcp::http
-{
-    AuthController::AuthController(GoogleOAuthConfig config)
-        : config_(std::move(config)) {}
+namespace mail_mcp::http {
+    AuthController::AuthController(const GoogleOAuthConfig& config) : config_(config) {}
+    AuthController::AuthController(GoogleOAuthConfig&& config) : config_(std::move(config)) {}
 
-    HttpResponseData AuthController::oauthStart(const Request &req) const
-    {
+    auto AuthController::oauthStart() const -> HttpResponseData {
         urls::url u("https://accounts.google.com/o/oauth2/v2/auth");
         auto params = u.params();
 
@@ -38,38 +32,34 @@ namespace mail_mcp::http
         return HttpResponseData(payload.dump());
     }
 
-    HttpResponseData AuthController::oauthCallback(const Request &req) const
-    {
-        boost::beast::string_view code = extractCode(req.target());
+    // auto AuthController::oauthCallback(const Request& req) const -> HttpResponseData {
+    //     boost::beast::string_view code = extractCode(req.target());
 
-        // If there's no "code" param, something went wrong
-        if (code.empty())
-        {
-            // throw
-        }
+    //     // If there's no "code" param, something went wrong
+    //     if (code.empty()) {
+    //         // throw
+    //     }
 
-        // TODO:
-        // 1. Validate `state` against what you generated in oauthStart().
-        // 2. Exchange `code` for tokens at https://oauth2.googleapis.com/token
-        //    using config_.client_id, config_.client_secret, config_.redirect_uri.
-        // 3. Store access_token / refresh_token somewhere.
+    //     // TODO:
+    //     // 1. Validate `state` against what you generated in oauthStart().
+    //     // 2. Exchange `code` for tokens at https://oauth2.googleapis.com/token
+    //     //    using config_.client_id, config_.client_secret, config_.redirect_uri.
+    //     // 3. Store access_token / refresh_token somewhere.
 
-        return HttpResponseData("{}");
-    }
+    //     return HttpResponseData("{}");
+    // }
 
-    boost::beast::string_view AuthController::extractCode(boost::beast::string_view target) const
-    {
+    [[nodiscard]] auto AuthController::extractCode(boost::beast::string_view target) -> boost::beast::string_view {
         urls::url_view parsed = urls::parse_relative_ref(target).value();
 
         auto params = parsed.params();
-        auto it = params.find("code");
+        auto itr = params.find("code");
 
-        if (it != params.end())
-        {
-            return (*it).value;
+        if (itr != params.end()) {
+            return (*itr).value;
         }
 
         return {};
     }
 
-} // mail_mcp::http
+} // namespace mail_mcp::http

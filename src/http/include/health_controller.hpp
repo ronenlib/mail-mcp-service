@@ -1,16 +1,12 @@
 #pragma once
 
-#include <http_response_data.hpp>
+#include "http_response_data.hpp"
 
-#include <string>
-
-namespace mail_mcp::http
-{
-    class HealthController
-    {
-    public:
+namespace mail_mcp::http {
+    class HealthController {
+      public:
         HealthController() = default;
 
-        HttpResponseData health() const;
+        [[nodiscard]] auto health() -> HttpResponseData;
     };
-}
+} // namespace mail_mcp::http

@@ -1,26 +1,21 @@
-#include <server.hpp>
-
 #include <auth_controller.hpp>
-
 #include <boost/asio.hpp>
-#include <thread>
-#include <fstream>
-#include <vector>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
+#include <server.hpp>
+#include <thread>
+#include <vector>
 
-void loadServiceEnv(const std::string &filename)
-{
+static void loadServiceEnv(const std::string& filename) {
     std::ifstream file(filename);
 
-    if (!file)
-    {
+    if (!file) {
         throw std::runtime_error(std::string("failed to open service env file: ") + filename);
     };
 
     std::string line;
-    while (std::getline(file, line))
-    {
+    while (std::getline(file, line)) {
         if (line.empty() || line[0] == '#')
             continue;
 
@@ -35,25 +30,20 @@ void loadServiceEnv(const std::string &filename)
     }
 }
 
-std::string requireEnv(const char *name)
-{
-    if (const char *value = std::getenv(name))
-    {
+std::string requireEnv(const char* name) {
+    if (const char* value = std::getenv(name)) {
         return std::string(value);
     }
 
     throw std::runtime_error(std::string("missing required env var: ") + name);
 }
 
-int main(int argc, char* argv[])
-{
-    try
-    {
+int main(int argc, char* argv[]) {
+    try {
         namespace asio = boost::asio;
         using tcp = asio::ip::tcp;
 
-        if (argc < 2)
-        {
+        if (argc < 2) {
             std::cerr << "Usage: " << argv[0] << " <env_filename>" << std::endl;
             return 1;
         }
@@ -61,10 +51,8 @@ int main(int argc, char* argv[])
         loadServiceEnv(argv[1]);
 
         mail_mcp::http::GoogleOAuthConfig oauthConfig{
-            requireEnv("OAUTH_CLIENT_ID"),
-            requireEnv("OAUTH_CLIENT_SECRET"),
-            requireEnv("OAUTH_REDIRECT_URI"),
-            requireEnv("OAUTH_SCOPE")};
+            requireEnv("OAUTH_CLIENT_ID"), requireEnv("OAUTH_CLIENT_SECRET"),
+            requireEnv("OAUTH_REDIRECT_URI"), requireEnv("OAUTH_SCOPE")};
 
         asio::io_context ioc;
 
@@ -77,22 +65,16 @@ int main(int argc, char* argv[])
         std::vector<std::thread> threads;
         threads.reserve(threadCount);
 
-        std::cout << "Listening on http://0.0.0.0:8080 with " << threadCount
-                  << " worker threads\n";
+        std::cout << "Listening on http://0.0.0.0:8080 with " << threadCount << " worker threads\n";
 
-        for (unsigned i = 0; i < threadCount; ++i)
-        {
-            threads.emplace_back([&ioc]
-                                 { ioc.run(); });
+        for (unsigned i = 0; i < threadCount; ++i) {
+            threads.emplace_back([&ioc] { ioc.run(); });
         }
 
-        for (auto &t : threads)
-        {
+        for (auto& t : threads) {
             t.join();
         }
-    }
-    catch (const std::exception &e)
-    {
+    } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << "\n";
     }
 

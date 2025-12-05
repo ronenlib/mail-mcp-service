@@ -1,18 +1,18 @@
 #pragma once
 
+#include "json_serializable.hpp"
 #include <nlohmann/json.hpp>
 #include <string>
 
-namespace mail_mcp::entity
-{
+namespace mail_mcp::entity {
 
-    class OAuthStart
-    {
-    public:
-        OAuthStart(const std::string &redirectUrl);
-        void serialize(nlohmann::json &out) const;
+    class OAuthStart : public JsonSerializable{
+      public:
+        explicit OAuthStart(const std::string& redirectUrl);
+        explicit OAuthStart(std::string&& redirectUrl);
+        void serialize(nlohmann::json& out) const override;
 
-    private:
+      private:
         std::string redirectUrl_;
     };
 

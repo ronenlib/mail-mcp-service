@@ -1,0 +1,23 @@
+Checks: >
+  -*,
+  bugprone-*,
+  performance-*,
+  readability-*,
+  modernize-*,
+  cppcoreguidelines-*,
+  clang-analyzer-*,
+  hicpp-*,
+  misc-*
+
+WarningsAsErrors: >
+  bugprone-*,
+  cppcoreguidelines-*,
+  clang-analyzer-*
+
+HeaderFilterRegex: '.*'
+FormatStyle: none
+CheckOptions:
+  - key:             modernize-use-nullptr.NullMacros
+    value:           'NULL'
+  - key:             readability-braces-around-statements.ShortStatementLines
+    value:           '1'

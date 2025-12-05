@@ -42,5 +42,7 @@
 
 # Build
 build/
+.cache
 
+.vscode
 service.env
